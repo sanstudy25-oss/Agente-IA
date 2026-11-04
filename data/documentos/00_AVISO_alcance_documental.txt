@@ -1,0 +1,15 @@
+AVISO DE ALCANCE DE LA BASE DOCUMENTAL — Agente Comercial Postobón
+
+Esta base documental contiene únicamente información pública de Postobón S.A. recopilada del sitio de referencia
+indicado en cada archivo (identidad corporativa, políticas corporativas, portafolio de marcas y sedes).
+
+NO incluye, por no haber sido proporcionados: la política comercial interna, las condiciones de venta,
+las escalas de descuentos y promociones, las listas de precios o tarifas, los acuerdos con clientes,
+las metas de ventas ni los lineamientos de negociación de Postobón.
+
+Cuando se consulte sobre esos temas, el agente debe indicar que la información no está disponible en los
+documentos cargados y sugerir cargar el documento oficial (PDF, Word convertido a PDF, Excel, CSV o TXT)
+en la sección "Documentos" de la aplicación.
+
+Las bases de ventas de demostración incluidas en el proyecto (archivos con la palabra SIMULADO) contienen
+datos ficticios y no representan ventas reales de Postobón.

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agente Comercial · Postobón</title>
+  <link rel="icon" href="/static/assets/logo_postobon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ============ BARRA LATERAL ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <!-- Para usar el logo oficial: coloque frontend/assets/logo_postobon.png y se mostrará automáticamente -->
+      <img id="logo" class="logo" src="/static/assets/logo_postobon.png" alt="Postobón" width="160" height="45">
+      <div class="agent-name"><span id="agentName">POSTO-Comercial</span><small>Agente de IA · Área comercial</small></div>
+    </div>
+
+    <nav class="nav" id="nav" aria-label="Secciones">
+      <button class="nav-item active" data-view="chat"><span class="ic">💬</span>Chat</button>
+      <button class="nav-item" data-view="analisis"><span class="ic">📊</span>Análisis comercial</button>
+      <button class="nav-item" data-view="ventas"><span class="ic">🧾</span>Archivos de ventas</button>
+      <button class="nav-item" data-view="documentos"><span class="ic">📚</span>Documentos</button>
+      <button class="nav-item" data-view="informes"><span class="ic">📄</span>Informes</button>
+    </nav>
+
+    <div class="status-card" aria-live="polite">
+      <h4>Estado del agente</h4>
+      <ul class="status-list" id="statusList">
+        <li><i class="dot"></i><span>Cargando…</span></li>
+      </ul>
+    </div>
+
+    <div class="history">
+      <div class="history-head"><h4>Historial</h4><button class="btn-mini" id="newChat" title="Nueva conversación">＋ Nueva</button></div>
+      <ul id="historyList" class="history-list"></ul>
+    </div>
+  </aside>
+
+  <!-- ============ CONTENIDO ============ -->
+  <main class="main">
+    <header class="topbar">
+      <button class="hamburger" id="hamburger" aria-label="Abrir menú">☰</button>
+      <h1 id="viewTitle">Chat con el agente</h1>
+      <div class="top-badges"><span id="simBadge" class="badge badge-warn hidden">Datos SIMULADOS</span><span id="dsBadge" class="badge">Sin base</span></div>
+    </header>
+
+    <div id="toasts" class="toasts" aria-live="polite"></div>
+
+    <!-- CHAT -->
+    <section class="view active" id="view-chat">
+      <div class="chat-wrap">
+        <div class="messages" id="messages" role="log" aria-live="polite"></div>
+        <div class="suggestions" id="suggestions"></div>
+        <div class="composer">
+          <textarea id="input" rows="1" maxlength="2000" placeholder="Pregunte por la política comercial, ventas, clientes, canales, tendencias o pida un informe…" aria-label="Pregunta"></textarea>
+          <button id="send" class="btn btn-primary">Enviar ➤</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ANALISIS -->
+    <section class="view" id="view-analisis">
+      <div class="panel filters" id="filters">
+        <label>Desde<input type="date" id="f-desde"></label>
+        <label>Hasta<input type="date" id="f-hasta"></label>
+        <label>Canal<select id="f-canal"><option value="">Todos</option></select></label>
+        <label>Región<select id="f-region"><option value="">Todas</option></select></label>
+        <label>Categoría<select id="f-categoria"><option value="">Todas</option></select></label>
+        <div class="filter-actions"><button class="btn btn-primary" id="applyFilters">Aplicar</button><button class="btn" id="clearFilters">Limpiar</button></div>
+      </div>
+      <div id="dashEmpty" class="empty hidden"></div>
+      <div id="kpiGrid"></div>
+      <div class="chart-grid" id="chartGrid"></div>
+      <div class="panel">
+        <div class="panel-head"><h3>Detalle por dimensión</h3>
+          <select id="dimSelect"><option value="producto">Producto</option><option value="categoria">Categoría</option><option value="cliente">Cliente</option><option value="canal">Canal</option><option value="region">Región</option><option value="ciudad">Ciudad</option><option value="mes">Mes</option></select>
+        </div>
+        <div id="dimTable"></div>
+      </div>
+      <div class="panel"><div class="panel-head"><h3>Oportunidades y alertas</h3></div><div id="oppList"></div></div>
+    </section>
+
+    <!-- VENTAS -->
+    <section class="view" id="view-ventas">
+      <div class="two-col">
+        <div class="panel">
+          <h3>Cargar archivo de ventas</h3>
+          <p class="muted">Excel (.xlsx/.xls) o CSV. Se valida, se normaliza y se guarda sin modificar el original. Reconoce columnas como fecha, producto, categoría, cliente, canal, ciudad, unidades, precio unitario, descuento, valor bruto y valor neto.</p>
+          <div class="drop" id="salesDrop" tabindex="0"><input type="file" id="salesFile" accept=".csv,.xlsx,.xls" hidden><strong>Arrastre un archivo aquí</strong><span>o haga clic para seleccionarlo</span></div>
+          <div class="btn-row"><button class="btn" id="btnDemo">Generar base de demostración (SIMULADA)</button></div>
+          <div id="uploadResult"></div>
+        </div>
+        <div class="panel">
+          <h3>Exportar base activa</h3>
+          <p class="muted">Descargue la base procesada y validada con las columnas estándar.</p>
+          <div class="btn-row"><a class="btn btn-primary" id="dlXlsx" href="/sales/export?formato=xlsx">⬇ Excel (.xlsx)</a><a class="btn btn-primary" id="dlCsv" href="/sales/export?formato=csv">⬇ CSV (.csv)</a></div>
+          <h3 class="mt">Crear nueva versión</h3>
+          <p class="muted">Filtre por fechas y guarde una nueva versión sin tocar el original.</p>
+          <div class="inline-form"><label>Desde<input type="date" id="v-desde"></label><label>Hasta<input type="date" id="v-hasta"></label><label>Canal<select id="v-canal"><option value="">Todos</option></select></label><button class="btn" id="btnVersion">Guardar versión</button></div>
+        </div>
+      </div>
+      <div class="panel"><div class="panel-head"><h3>Bases disponibles</h3></div><div id="datasetList"></div></div>
+      <div class="panel"><div class="panel-head"><h3>Vista previa de la base activa</h3></div><div id="rowsPreview"></div></div>
+    </section>
+
+    <!-- DOCUMENTOS -->
+    <section class="view" id="view-documentos">
+      <div class="two-col">
+        <div class="panel">
+          <h3>Cargar documentos a la base de conocimiento</h3>
+          <p class="muted">PDF, CSV, Excel, TXT o MD. Se extraen, fragmentan, indexan (BM25 + vectores) y quedan disponibles para el agente.</p>
+          <div class="drop" id="docDrop" tabindex="0"><input type="file" id="docFile" accept=".pdf,.csv,.xlsx,.xls,.txt,.md" multiple hidden><strong>Arrastre documentos aquí</strong><span>o haga clic para seleccionarlos</span></div>
+          <div class="btn-row"><button class="btn" id="btnReindex">Actualizar índice</button></div>
+          <div id="docResult"></div>
+        </div>
+        <div class="panel">
+          <h3>Probar búsqueda</h3>
+          <div class="search-row"><input type="search" id="docQuery" placeholder="Ej.: portafolio de aguas, política SARLAFT…"><button class="btn btn-primary" id="btnSearch">Buscar</button></div>
+          <div id="searchResults"></div>
+        </div>
+      </div>
+      <div class="panel"><div class="panel-head"><h3>Documentos indexados</h3><span class="muted" id="ragStats"></span></div><div id="docList"></div></div>
+    </section>
+
+    <!-- INFORMES -->
+    <section class="view" id="view-informes">
+      <div class="panel">
+        <div class="panel-head"><h3>Informe comercial automático</h3>
+          <div class="btn-row"><button class="btn" id="btnPreview">Vista previa</button><button class="btn btn-primary" id="btnGenerate">Generar / actualizar informe</button></div>
+        </div>
+        <p class="muted">El informe se calcula directamente desde la base de ventas activa e incluye resumen ejecutivo, indicadores, gráficos, comparación de periodos, tendencias, oportunidades, conclusiones y recomendaciones.</p>
+      </div>
+      <div id="reportView"></div>
+      <div class="panel"><div class="panel-head"><h3>Informes generados</h3></div><div id="reportList"></div></div>
+    </section>
+  </main>
+</div>
+
+<script src="/static/vendor/chart.umd.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

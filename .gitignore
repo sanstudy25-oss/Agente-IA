@@ -1,0 +1,28 @@
+# Secretos
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# Datos generados localmente (los documentos/ventas de ejemplo sí se versionan)
+data/procesados/*
+!data/procesados/.gitkeep
+data/reportes/*
+!data/reportes/.gitkeep
+data/ventas/*
+!data/ventas/.gitkeep
+!data/ventas/ventas_demo_SIMULADO.csv
+!data/ventas/ventas_demo_SIMULADO.xlsx
+
+# IDE / SO
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

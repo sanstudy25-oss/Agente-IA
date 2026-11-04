@@ -1,0 +1,29 @@
+# ============================================================
+#  Agente Comercial Postobón — dependencias
+#  pip install -r requirements.txt   (Python 3.11 o superior)
+# ============================================================
+langchain==1.3.18
+langchain-core==1.6.1
+langchain-text-splitters==1.1.2
+langchain-groq==1.1.3
+langchain-ollama==1.1.0
+langgraph==1.2.11
+
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+python-multipart==0.0.32
+pydantic==2.13.5
+python-dotenv==1.2.3
+requests==2.34.2
+
+# Documentos, datos y RAG
+pypdf==6.14.2
+pandas==2.3.3
+numpy
+openpyxl==3.1.5
+scikit-learn
+matplotlib
+
+# Pruebas
+pytest
+httpx==0.28.1
